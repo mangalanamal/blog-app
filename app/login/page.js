@@ -1,14 +1,3 @@
-// import Link from "next/link"
-
-// export default function page() {
-//   return (
-//     <div>
-//         <h1>This is Login</h1>
-//         <Link href="/">Home</Link>
-//     </div>
-//   )
-// }
-
 'use client';
 
 import { useState } from 'react';
