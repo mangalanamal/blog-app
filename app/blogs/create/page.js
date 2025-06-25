@@ -24,6 +24,14 @@ export default function CreateBlog() {
   const [errors, setErrors] = useState({});
   const [showPreview, setShowPreview] = useState(false);
   const [imagePreview, setImagePreview] = useState('');
+  const [token, setToken] = useState(null);
+
+useEffect(() => {
+  if (typeof window !== 'undefined') {
+    const storedToken = sessionStorage.getItem('token');
+    setToken(storedToken);
+  }
+}, []);
 
   const validateForm = () => {
     const newErrors = {};
@@ -81,7 +89,7 @@ export default function CreateBlog() {
       const blogData = {
         ...form
       };
-         const token =  sessionStorage.getItem('token');
+      
       const res = await fetch('/api/blogs', {
         method: 'POST',
         headers: { 'Authorization': `Bearer ${token}`,'Content-Type': 'application/json' },

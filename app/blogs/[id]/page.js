@@ -1,7 +1,7 @@
 import React from 'react';
 
 async function getBlog(id) {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/blogs/${id}`, {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/blogs//view/${id}`, {
     cache: 'no-store',
   });
 
