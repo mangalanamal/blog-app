@@ -1,11 +1,11 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { Eye, EyeOff, User, Mail, Lock, ArrowRight, Sparkles } from 'lucide-react';
 
 export default function RegisterPage() {
-  // Mock router for demo - replace with useRouter() in your Next.js app
-  const router = { push: (path) => console.log(`Navigating to ${path}`) };
+  const router = useRouter();
 
   const [form, setForm] = useState({ username: '', email: '', password: '' });
   const [error, setError] = useState('');
@@ -21,18 +21,35 @@ export default function RegisterPage() {
   const handleSubmit = async e => {
     e.preventDefault();
     setIsLoading(true);
+    setError('');
 
     try {
-      // Simulate API call for demo
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      const response = await fetch('/api/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          username: form.username,
+          email: form.email,
+          password: form.password,
+        }),
+      });
 
-      // Mock successful registration
-      const mockToken = 'mock-jwt-token';
-      // In real app: localStorage.setItem('token', data.token);
-      console.log('Token would be stored:', mockToken);
-      router.push('/');
+      const data = await response.json();
+
+      if (response.ok) {
+        // Registration successful
+        console.log('User registered successfully:', data.message);
+        // Redirect to login page or dashboard
+        router.push('/login'); // or wherever you want to redirect after successful registration
+      } else {
+        // Handle specific error messages from the API
+        setError(data.error || 'Registration failed');
+      }
     } catch (err) {
-      setError('Something went wrong');
+      console.error('Registration error:', err);
+      setError('Network error. Please try again.');
     } finally {
       setIsLoading(false);
     }
@@ -105,7 +122,8 @@ export default function RegisterPage() {
                     onBlur={() => setFocusedField('')}
                     placeholder="Username"
                     required
-                    className="w-full pl-12 pr-4 py-4 bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500/50 transition-all duration-200"
+                    disabled={isLoading}
+                    className="w-full pl-12 pr-4 py-4 bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500/50 transition-all duration-200 disabled:opacity-50"
                   />
                 </div>
               </div>
@@ -124,7 +142,8 @@ export default function RegisterPage() {
                     onBlur={() => setFocusedField('')}
                     placeholder="Email address"
                     required
-                    className="w-full pl-12 pr-4 py-4 bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500/50 transition-all duration-200"
+                    disabled={isLoading}
+                    className="w-full pl-12 pr-4 py-4 bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500/50 transition-all duration-200 disabled:opacity-50"
                   />
                 </div>
               </div>
@@ -143,42 +162,49 @@ export default function RegisterPage() {
                     onBlur={() => setFocusedField('')}
                     placeholder="Password"
                     required
-                    className="w-full pl-12 pr-12 py-4 bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500/50 transition-all duration-200"
+                    disabled={isLoading}
+                    className="w-full pl-12 pr-12 py-4 bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500/50 transition-all duration-200 disabled:opacity-50"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-purple-300 transition-colors duration-200"
+                    disabled={isLoading}
+                    className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-purple-300 transition-colors duration-200 disabled:opacity-50"
                   >
-                    {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />} </button>
+                    {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                  </button>
                 </div>
               </div>
-         
 
-            {/* Submit Button */}
-            <div
-              onClick={handleSubmit}
-              className="w-full relative group bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-semibold py-4 px-6 rounded-xl transition-all duration-200 transform hover:scale-105 hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 cursor-pointer"
-            >
-              <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-200"></div>
-              <div className="relative flex items-center justify-center">
-                {isLoading ? (
-                  <div className="w-6 h-6 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                ) : (
-                  <>
-                    <span>Create Account</span>
-                    <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform duration-200" />
-                  </>
-                )}
-              </div>
-
+              {/* Submit Button */}
+              <button
+                type="button"
+                onClick={handleSubmit}
+                disabled={isLoading}
+                className="w-full relative group bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-semibold py-4 px-6 rounded-xl transition-all duration-200 transform hover:scale-105 hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+              >
+                <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-200"></div>
+                <div className="relative flex items-center justify-center">
+                  {isLoading ? (
+                    <div className="w-6 h-6 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                  ) : (
+                    <>
+                      <span>Create Account</span>
+                      <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform duration-200" />
+                    </>
+                  )}
+                </div>
+              </button>
             </div>
-   </div>
+
             {/* Footer */}
             <div className="mt-8 text-center">
               <p className="text-purple-200 text-sm">
                 Already have an account?{' '}
-                <button className="text-white font-semibold hover:text-purple-300 transition-colors duration-200 underline underline-offset-2">
+                <button 
+                  onClick={() => router.push('/login')}
+                  className="text-white font-semibold hover:text-purple-300 transition-colors duration-200 underline underline-offset-2"
+                >
                   Sign in
                 </button>
               </p>
