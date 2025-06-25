@@ -55,7 +55,7 @@ export async function DELETE(req, { params }) {
 export async function GET(req, { params }) {
  try {
     await connectDB();
-    const blog = await Blog.findById(params.id);
+    const blog = await Blog.findById(params);
     if (!blog) {
       return Response.json({ message: 'Blog not found' }, { status: 404 });
     }

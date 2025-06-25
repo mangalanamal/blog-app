@@ -11,17 +11,8 @@ export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
-  // Scroll effect
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
-    token = sessionStorage.getItem('token');
-  if (token) {
-    console.log('Token exists:', token);
-    // You can update state or context here if needed
-  } else {
-    console.log('No token found');
-  }
-
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
@@ -43,7 +34,7 @@ export default function Header() {
   };
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-white">
+    <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled ? 'shadow-md' : ''} bg-white`}>
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 h-16">
         <div className="flex h-16 lg:h-20 items-center justify-between">
           {/* Logo */}
@@ -63,7 +54,6 @@ export default function Header() {
                 <h1 className="text-xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent">
                   Blog App
                 </h1>
-                <p className="text-xs text-gray-500 -mt-1">Insights & Stories</p>
               </div>
             </a>
           </div>
@@ -84,13 +74,7 @@ export default function Header() {
                     onClick={(e) => handleProtectedRoute(e, '/blogs')}
                     className="relative text-gray-600 hover:text-gray-900 font-medium transition-all duration-300 group py-2 cursor-pointer"
                   >
-                    My Blog
-                    <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-blue-600 to-purple-600 group-hover:w-full transition-all duration-300"></span>
-                  </a>
-                </li>
-                <li>
-                  <a href="/about" className="relative text-gray-600 hover:text-gray-900 font-medium transition-all duration-300 group py-2">
-                    About
+                    My Post
                     <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-blue-600 to-purple-600 group-hover:w-full transition-all duration-300"></span>
                   </a>
                 </li>
@@ -101,7 +85,7 @@ export default function Header() {
             <div className="flex items-center gap-4">
               {token ? (
                 <>
-                  <span className="text-gray-600 font-medium">Hi, {user}</span>
+                  <span className="text-gray-600 font-medium">Hi, {user?.username || 'User'}</span>
                   <button onClick={handleLogout} className="text-gray-600 hover:text-gray-900 font-medium transition-colors duration-200">
                     Logout
                   </button>
@@ -134,60 +118,6 @@ export default function Header() {
                 <span className={`absolute top-4 left-0 w-6 h-0.5 bg-current transition-all duration-300 ${isMenuOpen ? '-rotate-45 top-2.5' : ''}`}></span>
               </div>
             </button>
-          </div>
-        </div>
-
-        {/* Mobile Menu */}
-        <div className={`lg:hidden overflow-hidden transition-all duration-300 ${isMenuOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'}`}>
-          <div className="py-4 border-t border-gray-100">
-            <nav className="space-y-4">
-              <a href="/" onClick={() => setIsMenuOpen(false)} className="block px-4 py-2 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-lg font-medium">
-                Home
-              </a>
-              <a
-                href="/blogs"
-                onClick={(e) => {
-                  e.preventDefault();
-                  handleProtectedRoute(e, '/blogs');
-                  setIsMenuOpen(false);
-                }}
-                className="block px-4 py-2 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-lg font-medium"
-              >
-                My Blog
-              </a>
-              <a href="/about" onClick={() => setIsMenuOpen(false)} className="block px-4 py-2 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-lg font-medium">
-                About
-              </a>
-            </nav>
-            <div className="pt-4 mt-4 border-t border-gray-100 space-y-3">
-              {token ? (
-                <>
-                  <span className="block px-4 py-2 text-gray-600 font-medium">Hi, {user}</span>
-                  <button
-                    onClick={() => {
-                      handleLogout();
-                      setIsMenuOpen(false);
-                    }}
-                    className="block w-full text-left px-4 py-2 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-lg font-medium"
-                  >
-                    Logout
-                  </button>
-                </>
-              ) : (
-                <>
-                  <a href="/login" onClick={() => setIsMenuOpen(false)} className="block px-4 py-2 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-lg font-medium">
-                    Login
-                  </a>
-                  <a
-                    href="/register"
-                    onClick={() => setIsMenuOpen(false)}
-                    className="block w-full text-center bg-gradient-to-r from-blue-600 to-purple-600 px-4 py-2.5 text-white font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all duration-300"
-                  >
-                    Get Started
-                  </a>
-                </>
-              )}
-            </div>
           </div>
         </div>
       </div>

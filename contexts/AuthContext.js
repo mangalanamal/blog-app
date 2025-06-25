@@ -4,28 +4,28 @@ import { createContext, useContext, useState, useEffect } from 'react';
 
 const AuthContext = createContext();
 
-export const AuthProvider = ({ children }) => {
+export function AuthProvider({ children }) {
   const [token, setToken] = useState(null);
-  const [user, setUser] = useState(null); // Store user info
+  const [user, setUser] = useState(null);
 
+  // Load sessionStorage on mount (e.g., on refresh)
   useEffect(() => {
-    const savedToken = sessionStorage.getItem('token');
-    const savedUser = sessionStorage.getItem('user');
-    if (savedToken && savedUser) {
-      setToken(savedToken);
-      setUser(savedUser);
-    }
+    const storedToken = sessionStorage.getItem('token');
+    const storedUser = sessionStorage.getItem('user');
+    if (storedToken) setToken(storedToken);
+    if (storedUser) setUser(JSON.parse(storedUser));
   }, []);
 
-  const login = (token, user) => {
-    sessionStorage.setItem('token', token);
-    sessionStorage.setItem('user', user);
-    setToken(token);
-    setUser(user);
+  const login = (newToken, newUser) => {
+    sessionStorage.setItem('token', newToken);
+    sessionStorage.setItem('user', JSON.stringify(newUser));
+    setToken(newToken);       // triggers re-render
+    setUser(newUser);
   };
 
   const logout = () => {
-    sessionStorage.clear();
+    sessionStorage.removeItem('token');
+    sessionStorage.removeItem('user');
     setToken(null);
     setUser(null);
   };
@@ -35,6 +35,6 @@ export const AuthProvider = ({ children }) => {
       {children}
     </AuthContext.Provider>
   );
-};
+}
 
 export const useAuth = () => useContext(AuthContext);

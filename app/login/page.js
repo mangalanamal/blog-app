@@ -2,9 +2,12 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useAuth } from '@/contexts/AuthContext'; // added
 
 export default function LoginPage() {
   const router = useRouter();
+  const { login } = useAuth(); // use login from context
+
   const [form, setForm] = useState({ email: '', password: '' });
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -12,7 +15,6 @@ export default function LoginPage() {
 
   const handleChange = e => {
     setForm({ ...form, [e.target.name]: e.target.value });
-    // Clear error when user starts typing
     if (error) setError('');
   };
 
@@ -33,8 +35,10 @@ export default function LoginPage() {
       if (!res.ok) {
         setError(data.error || 'Login failed');
       } else {
-        // Use sessionStorage instead of localStorage for Claude.ai compatibility
-        sessionStorage.setItem('token', data.token);
+        // Instead of manually setting sessionStorage,
+        // use the login() from AuthContext
+        console.log(data);
+        login(data.token, data.user); // ← update token & user in React state
         router.push('/');
       }
     } catch (err) {

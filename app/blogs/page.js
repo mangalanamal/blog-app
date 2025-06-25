@@ -19,15 +19,25 @@ export default function BlogList() {
   const [sortBy, setSortBy] = useState('newest');
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [blogToDelete, setBlogToDelete] = useState(null);
+ // const token =  sessionStorage.getItem('token');
+  const[token,setToke]= useState(sessionStorage.getItem('token'));
 
   useEffect(() => {
     fetchBlogs();
+  
   }, []);
 
   const fetchBlogs = async () => {
     try {
-      setLoading(true);
-      const res = await fetch('/api/blogs');
+      setLoading(true);    
+      setToke(sessionStorage.getItem('token'));
+const res = await fetch('/api/blogs/myblogs', {
+  method: 'GET',
+  headers: {
+    'Authorization': `Bearer ${token}`, // <-- Add your JWT token here
+    'Content-Type': 'application/json',
+    },
+    });
       const data = await res.json();
       setBlogs(data.blogs || []);
     } catch (err) {
@@ -48,6 +58,9 @@ export default function BlogList() {
     try {
       const res = await fetch(`/api/blogs/${blogToDelete._id}`, {
         method: 'DELETE',
+        headers: {
+                'Authorization': `Bearer ${token}`
+        },
       });
 
       if (res.ok) {
@@ -267,4 +280,5 @@ export default function BlogList() {
       </div>
     </div>
   );
+
 }
