@@ -13,20 +13,20 @@ async function getBlog(id) {
 }
 
 // Mock function to get related blogs - replace with your actual API call
-async function getRelatedBlogs() {
-  try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/blogs?limit=3`, {
-      cache: 'no-store',
-    });
-    if (res.ok) {
-      const data = await res.json();
-      return data.blogs || [];
-    }
-  } catch (error) {
-    console.error('Failed to fetch related blogs:', error);
-  }
-  return [];
-}
+// async function getRelatedBlogs() {
+//   try {
+//     const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/blogs?limit=3`, {
+//       cache: 'no-store',
+//     });
+//     if (res.ok) {
+//       const data = await res.json();
+//       return data.blogs || [];
+//     }
+//   } catch (error) {
+//     console.error('Failed to fetch related blogs:', error);
+//   }
+//   return [];
+// }
 
 export default async function BlogDetail({ params }) {
   const { id } = params;
