@@ -20,17 +20,20 @@ export default function BlogList() {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [blogToDelete, setBlogToDelete] = useState(null);
  // const token =  sessionStorage.getItem('token');
-  const[token,setToke]= useState(sessionStorage.getItem('token'));
+  const[token,setToke]= useState(null);
 
   useEffect(() => {
     fetchBlogs();
-  
+     if (typeof window !== 'undefined') {
+    const storedToken = sessionStorage.getItem('token');
+    setToken(storedToken);
+  }
   }, []);
 
   const fetchBlogs = async () => {
     try {
       setLoading(true);    
-      setToke(sessionStorage.getItem('token'));
+    
 const res = await fetch('/api/blogs/myblogs', {
   method: 'GET',
   headers: {
